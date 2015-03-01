@@ -2481,7 +2481,7 @@ return function (global, window, document, undefined) {
                on animating elements. HA is removed from the element at the completion of its animation. */
             /* Note: Android Gingerbread doesn't support HA. If a null transform hack (mobileHA) is in fact set, it will prevent other tranform subproperties from taking effect. */
             /* Note: You can read more about the use of mobileHA in Velocity's documentation: VelocityJS.org/#mobileHA. */
-            opts.mobileHA = opts.forceHA || (opts.mobileHA && Velocity.State.isMobile && !Velocity.State.isGingerbread);
+            opts.mobileHA = (opts.forceHA || (opts.mobileHA && Velocity.State.isMobile)) && !Velocity.State.isGingerbread;
 
             /***********************
                Part II: Queueing
