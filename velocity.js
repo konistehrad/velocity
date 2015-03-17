@@ -1970,7 +1970,7 @@ return function (global, window, document, undefined) {
                 if( elements.length > 0 ) {
                     // if we're going for $.css() compat, we need to target the first element
                     if (Data(elements[0]) === undefined) {
-                        Velocity.init(element);
+                        Velocity.init(elements[0]);
                     }
                     value = Velocity.CSS.getPropertyValue(elements[0], arg2);
                 }
