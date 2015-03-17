@@ -1925,10 +1925,20 @@ return function (global, window, document, undefined) {
                 });
             } else {
                 var transformValue,
+                    transformCache = Data(element).transformCache,
                     perspective;
 
+                var orderedCache = [];
+                for( var key in transformCache ) {
+                    if( /^translate/i.test(key) ) {
+                        orderedCache.unshift(key);
+                    } else {
+                        orderedCache.push(key);
+                    }
+                }
+
                 /* Transform properties are stored as members of the transformCache object. Concatenate all the members into a string. */
-                $.each(Data(element).transformCache, function(transformName) {
+                $.each(orderedCache, function(i,transformName) {
                     transformValue = Data(element).transformCache[transformName];
 
                     /* Transform's perspective subproperty must be set first in order to take effect. Store it temporarily. */
