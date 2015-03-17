@@ -624,7 +624,6 @@ return function (global, window, document, undefined) {
             delay: false,
             mobileHA: true,
             forceHA: false,
-            transformOrder: [],
             /* Advanced: Set to false to prevent property values from being cached between consecutive Velocity-initiated chain calls. */
             _cacheValues: true
         },
@@ -1925,35 +1924,12 @@ return function (global, window, document, undefined) {
                     }
                 });
             } else {
-                var transformCache = Data(element).transformCache,
-                    transformOrder = Data(element).opts.transformOrder,
-                    orderedTransformCache,
-                    transformName,
-                    transformValue,
+                var transformValue,
                     perspective;
 
                 /* Transform properties are stored as members of the transformCache object. Concatenate all the members into a string. */
-
-                orderedTransformCache = $.map(transformCache, function(value, index) {
-                    return {name: index, value: value};
-                });
-
-                orderedTransformCache.sort(function(a, b) {
-                    var indexA = transformOrder.indexOf(a.name),
-                        indexB = transformOrder.indexOf(b.name);
-
-                    if (indexA > indexB) {
-                        return 1;
-                    } else if (indexA < indexB) {
-                        return - 1;
-                    }
-
-                    return 0;
-                });
-
-                $.each(orderedTransformCache, function(transformIndex, transformOb) {
-                    transformValue = transformOb.value;
-                    transformName = transformOb.name;
+                $.each(Data(element).transformCache, function(transformName) {
+                    transformValue = Data(element).transformCache[transformName];
 
                     /* Transform's perspective subproperty must be set first in order to take effect. Store it temporarily. */
                     if (transformName === "transformPerspective") {
