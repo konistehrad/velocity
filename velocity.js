@@ -1971,9 +1971,29 @@ return function (global, window, document, undefined) {
 
     /* Allow hook setting in the same fashion as jQuery's $.css(). */
     Velocity.hook = function (elements, arg2, arg3) {
-        var value = undefined;
+        var value;
 
         elements = sanitizeElements(elements);
+
+        if( arg3 === undefined ) {
+            if( typeof arg2 === "string" ) {
+                if( elements.length > 0 ) {
+                    // if we're going for $.css() compat, we need to target the first element
+                    if (Data(elements[0]) === undefined) {
+                        Velocity.init(element);
+                    }
+                    value = Velocity.CSS.getPropertyValue(elements[0], arg2);
+                }
+
+                return value;
+            } else if( typeof arg2 === "object" ) {
+                var results = [];
+                for(var key in arg2) {
+                    results.push( Velocity.hook(elements,key,arg2[key]) );
+                }
+                return results;
+            }
+        }
 
         $.each(elements, function(i, element) {
             /* Initialize Velocity's per-element data cache if this element hasn't previously been animated. */
@@ -1981,23 +2001,15 @@ return function (global, window, document, undefined) {
                 Velocity.init(element);
             }
 
-            /* Get property value. If an element set was passed in, only return the value for the first element. */
-            if (arg3 === undefined) {
-                if (value === undefined) {
-                    value = Velocity.CSS.getPropertyValue(element, arg2);
-                }
-            /* Set property value. */
-            } else {
-                /* sPV returns an array of the normalized propertyName/propertyValue pair used to update the DOM. */
-                var adjustedSet = Velocity.CSS.setPropertyValue(element, arg2, arg3);
+            /* sPV returns an array of the normalized propertyName/propertyValue pair used to update the DOM. */
+            var adjustedSet = Velocity.CSS.setPropertyValue(element, arg2, arg3);
 
-                /* Transform properties don't automatically set. They have to be flushed to the DOM. */
-                if (adjustedSet[0] === "transform") {
-                    Velocity.CSS.flushTransformCache(element);
-                }
-
-                value = adjustedSet;
+            /* Transform properties don't automatically set. They have to be flushed to the DOM. */
+            if (adjustedSet[0] === "transform") {
+                Velocity.CSS.flushTransformCache(element);
             }
+
+            value = adjustedSet;
         });
 
         return value;
